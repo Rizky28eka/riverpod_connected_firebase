@@ -5,10 +5,12 @@ class TextFieldWidget extends StatelessWidget {
     Key? key,
     required this.hintText,
     required this.maxLines,
+    required this.txtController,
   }) : super(key: key);
 
   final String hintText;
   final int maxLines;
+  final TextEditingController txtController;
 
   @override
   Widget build(BuildContext context) {
@@ -19,6 +21,7 @@ class TextFieldWidget extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
       ),
       child: TextField(
+        controller: txtController,
         decoration: InputDecoration(
           enabledBorder: InputBorder.none,
           focusedBorder: InputBorder.none,

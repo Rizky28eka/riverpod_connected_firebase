@@ -1,22 +1,29 @@
+import 'package:f_riverpot_connected_firebase/models/todo_model.dart';
+import 'package:f_riverpot_connected_firebase/provider/service_provider.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
 import 'package:intl/intl.dart';
-import '../provide/date_time_provider.dart';
-import '../provide/radio_provider.dart';
+import '../provider/date_time_provider.dart';
+import '../provider/radio_provider.dart';
 import '../widgets/date_time_widget.dart';
 import '../widgets/radio_widget.dart';
 import '../widgets/textfield_widget.dart';
 import 'package:f_riverpot_connected_firebase/appstyle.dart';
 
 class AddNewTaskModel extends ConsumerWidget {
-  const AddNewTaskModel({Key? key}) : super(key: key);
+  AddNewTaskModel({Key? key}) : super(key: key);
+
+  final titleController = TextEditingController();
+  final descriptionController = TextEditingController();
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final dateProv = ref.watch(dateProvider);
     final radioCategory = ref.watch(dateProvider);
+
     return SingleChildScrollView(
       child: Container(
         padding: EdgeInsets.all(30),
@@ -50,11 +57,19 @@ class AddNewTaskModel extends ConsumerWidget {
               style: AppStyle.headingOne,
             ),
             Gap(6),
-            TextFieldWidget(hintText: "Add Name Task", maxLines: 1),
+            TextFieldWidget(
+              hintText: "Add Name Task",
+              maxLines: 1,
+              txtController: titleController,
+            ),
             Gap(12),
             Text('Description', style: AppStyle.headingOne),
             Gap(12),
-            TextFieldWidget(hintText: "Add Description", maxLines: 5),
+            TextFieldWidget(
+              hintText: "Add Description",
+              maxLines: 5,
+              txtController: descriptionController,
+            ),
             Gap(12),
             Text("Category", style: AppStyle.headingOne),
             Row(
@@ -163,7 +178,29 @@ class AddNewTaskModel extends ConsumerWidget {
                       padding: EdgeInsets.symmetric(vertical: 14),
                     ),
                     onPressed: () {
+                      final getRadioValue = ref.read(radioProvider);
+                      String category = '';
+
+                      switch (getRadioValue) {
+                        case 1:
+                          category = 'Learning';
+                          break;
+                        case 2:
+                          category = 'Working';
+                          break;
+                        case 3:
+                          category = 'General';
+                          break;
+                      }
                       // Logic for Save
+
+                      ref.read(serviceProvider).addNewTask(TodoModel(
+                            titleTask: titleController.text,
+                            description: descriptionController.text,
+                            category: category,
+                            dateTask: ref.read(dateProvider),
+                            timeTask: ref.read(timeProvider),
+                          ));
                     },
                     child: Text("Create"),
                   ),
